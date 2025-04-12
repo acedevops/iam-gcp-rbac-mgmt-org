@@ -3,19 +3,13 @@ import json
 import sys
 from pathlib import Path
 from google.auth import default
+from google.auth import impersonated_credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-def create_custom_role_from_yaml(yaml_path, fallback_project_id):
+def create_custom_role_from_yaml(yaml_path, fallback_project_id, is_org):
     with open(yaml_path, 'r') as f:
         role_def = yaml.safe_load(f)
-
-    # credentials, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-    # service = build('iam', 'v1', credentials=credentials)
-
-    from google.auth import default
-    from google.auth import impersonated_credentials
-    from googleapiclient.discovery import build
 
     # Step 1: Load source creds (ADC points to auth@v2 federated token)
     source_credentials, _ = default()
@@ -34,7 +28,6 @@ def create_custom_role_from_yaml(yaml_path, fallback_project_id):
     # Step 3: Build the IAM service with impersonated identity
     service = build("iam", "v1", credentials=impersonated_creds)
 
-
     role_id = role_def['roleId']
     role = {
         "title": role_def['title'],
@@ -43,9 +36,9 @@ def create_custom_role_from_yaml(yaml_path, fallback_project_id):
         "includedPermissions": role_def['includedPermissions']
     }
 
-    # Determine if this is org or project scoped
-    if 'organizationId' in role_def:
-        parent = f"organizations/{role_def['organizationId']}"
+    # Determine IAM parent path based on --org flag
+    if is_org:
+        parent = f"organizations/{fallback_project_id}"
         get_func = service.organizations().roles().get
         create_func = service.organizations().roles().create
     else:
@@ -74,7 +67,7 @@ def create_custom_role_from_yaml(yaml_path, fallback_project_id):
     except HttpError as e:
         print(f"❌ Failed to create role '{role_id}': {e}")
 
-def create_roles_from_directory(directory, fallback_project_id):
+def create_roles_from_directory(directory, fallback_project_id, is_org):
     roles_path = Path(directory)
     if not roles_path.exists():
         print(f"❌ Directory '{directory}' not found.")
@@ -82,7 +75,7 @@ def create_roles_from_directory(directory, fallback_project_id):
 
     for yaml_file in roles_path.glob("*.yaml"):
         print(f"\n📄 Processing: {yaml_file.name}")
-        create_custom_role_from_yaml(yaml_file, fallback_project_id)
+        create_custom_role_from_yaml(yaml_file, fallback_project_id, is_org)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -92,16 +85,4 @@ if __name__ == "__main__":
     scope_id = sys.argv[1]
     is_org = len(sys.argv) == 3 and sys.argv[2] == '--org'
 
-    # Patch org fallback logic into the role YAML temporarily (to simplify usage)
-    if is_org:
-        def patch_org_yaml(file_path):
-            with open(file_path, 'r') as f:
-                data = yaml.safe_load(f)
-            data['organizationId'] = scope_id
-            with open(file_path, 'w') as f:
-                yaml.dump(data, f)
-
-        for file in Path("definitions").glob("*.yaml"):
-            patch_org_yaml(file)
-
-    create_roles_from_directory("infrastructure/definitions", scope_id)
+    create_roles_from_directory("infrastructure/definitions", scope_id, is_org)
