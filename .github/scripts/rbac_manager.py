@@ -82,4 +82,4 @@ if __name__ == "__main__":
         for file in Path("definitions").glob("*.yaml"):
             patch_org_yaml(file)
 
-    create_roles_from_directory("definitions", scope_id)
+    create_roles_from_directory("infractructure/definitions", scope_id)

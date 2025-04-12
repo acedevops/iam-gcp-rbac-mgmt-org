@@ -44,5 +44,5 @@ jobs:
             python create_custom_role.py ${{ github.event.inputs.project_id }}
           else
             echo "🏢 No project specified. Using default org: 1233455"
-            python create_custom_role.py 1233455 --org
+            python .github/scripts/rbac_manager.py 168730572751 --org
           fi
