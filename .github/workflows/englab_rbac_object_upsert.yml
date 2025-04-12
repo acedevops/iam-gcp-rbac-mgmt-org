@@ -1,0 +1,48 @@
+name: Create Custom Role from YAML
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: "Optional: GCP Project ID to define the role at project level"
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  create-role:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GOOGLE_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_EMAIL }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python dependencies
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Run Python script to create custom roles
+        run: |
+          source .venv/bin/activate
+          if [[ -n "${{ github.event.inputs.project_id }}" ]]; then
+            echo "📦 Defining role at project level: ${{ github.event.inputs.project_id }}"
+            python create_custom_role.py ${{ github.event.inputs.project_id }}
+          else
+            echo "🏢 No project specified. Using default org: 1233455"
+            python create_custom_role.py 1233455 --org
+          fi
