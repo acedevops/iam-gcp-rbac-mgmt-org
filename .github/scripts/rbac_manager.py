@@ -10,8 +10,30 @@ def create_custom_role_from_yaml(yaml_path, fallback_project_id):
     with open(yaml_path, 'r') as f:
         role_def = yaml.safe_load(f)
 
-    credentials, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-    service = build('iam', 'v1', credentials=credentials)
+    # credentials, _ = default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+    # service = build('iam', 'v1', credentials=credentials)
+
+    from google.auth import default
+    from google.auth import impersonated_credentials
+    from googleapiclient.discovery import build
+
+    # Step 1: Load source creds (ADC points to auth@v2 federated token)
+    source_credentials, _ = default()
+
+    # Step 2: Create impersonated credentials for your target SA
+    target_service_account = "gcp-gh-sa@hale-entry-456413-g7.iam.gserviceaccount.com"
+    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+
+    impersonated_creds = impersonated_credentials.Credentials(
+        source_credentials=source_credentials,
+        target_principal=target_service_account,
+        target_scopes=scopes,
+        lifetime=3600,
+    )
+
+    # Step 3: Build the IAM service with impersonated identity
+    service = build("iam", "v1", credentials=impersonated_creds)
+
 
     role_id = role_def['roleId']
     role = {
