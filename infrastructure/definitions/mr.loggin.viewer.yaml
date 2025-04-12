@@ -4,5 +4,4 @@ description: This custom role allows read-only access to log entries.
 stage: GA
 includedPermissions:
   - logging.logEntries.list
-  - logging.logEntries.view
   - logging.logs.list
