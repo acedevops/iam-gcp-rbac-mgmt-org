@@ -46,7 +46,7 @@ jobs:
           source .venv/bin/activate
           if [[ -n "${{ github.event.inputs.project_id }}" ]]; then
             echo "📦 Defining role at project level: ${{ github.event.inputs.project_id }}"
-            python create_custom_role.py ${{ github.event.inputs.project_id }}
+            python rbac_manager.py ${{ github.event.inputs.project_id }}
           else
             echo "🏢 No project specified. Using default org: 1233455"
             python .github/scripts/rbac_manager.py 168730572751 --org
