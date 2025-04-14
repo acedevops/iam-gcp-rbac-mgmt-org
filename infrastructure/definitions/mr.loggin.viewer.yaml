@@ -1,7 +1,8 @@
-roleId: customLoggingViewer
-title: Custom Logging Viewer
-description: This custom role allows read-only access to log entries.
-stage: GA
-includedPermissions:
-  - logging.logEntries.list
-  - logging.logs.list
+Properties:
+  roleId: customLoggingViewer - 01
+  title: Custom Logging Viewer
+  description: This custom role allows read-only access to log entries.
+  stage: GA
+  includedPermissions:
+    - logging.logEntries.list
+    - logging.logs.list
