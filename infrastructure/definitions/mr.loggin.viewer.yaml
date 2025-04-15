@@ -1,6 +1,6 @@
 Properties:
-  roleId: customLoggingViewer - 01
-  title: Custom Logging Viewer
+  roleId: customLoggingViewer - 011
+  title: Custom Logging Viewer11
   description: This custom role allows read-only access to log entries.
   stage: GA
   includedPermissions:
