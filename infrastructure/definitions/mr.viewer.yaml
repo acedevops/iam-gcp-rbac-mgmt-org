@@ -21,3 +21,4 @@ customRole:
     - dataplex.assets.readData
     - domains.registrations.get
     - gcp.redisenterprise.com/databases.list
+    - gkehub.fleet.get
