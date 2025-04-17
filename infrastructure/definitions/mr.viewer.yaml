@@ -19,3 +19,4 @@ customRole:
     - cloudonefs.isiloncloud.com/fileshares.get
     - cloudonefs.isiloncloud.com/fileshares.list
     - dataplex.assets.readData
+    - domains.registrations.get
