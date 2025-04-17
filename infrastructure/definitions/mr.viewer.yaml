@@ -20,3 +20,4 @@ customRole:
     - cloudonefs.isiloncloud.com/fileshares.list
     - dataplex.assets.readData
     - domains.registrations.get
+    - gcp.redisenterprise.com/databases.list
