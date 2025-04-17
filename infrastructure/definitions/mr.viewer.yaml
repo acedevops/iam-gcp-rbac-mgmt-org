@@ -23,3 +23,4 @@ customRole:
     - gcp.redisenterprise.com/databases.list
     - gkehub.fleet.get
     - gcp.redisenterprise.com/subscriptions.list
+    - gcp.redisenterprise.com/databases.get
