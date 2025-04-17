@@ -12,3 +12,4 @@ customRole:
   excludedPermissions:
     - cloudonefs.isiloncloud.com/clusters.get
     - gcp.redisenterprise.com/subscriptions.get
+    - domains.registrations.getIamPolicy
