@@ -49,7 +49,7 @@ def create_custom_role_from_yaml(yaml_path, org_id, access_level):
     # Step 3: Build the IAM service with impersonated identity
     service = build("iam", "v1", credentials=impersonated_creds)
 
-    role_id = role_def['id']
+    role_id = role_props['id']
     permissions = set(role_props.get('includedPermissions', []))
     excluded_permissions = set(role_props.get('excludedPermissions', []))
 
@@ -66,9 +66,9 @@ def create_custom_role_from_yaml(yaml_path, org_id, access_level):
         sys.exit(1)
 
     role_payload = {
-        "title": role_def['name'],
-        "description": f"{access_level}: {role_def['description']}",
-        "stage": role_def.get('stage', 'GA'),
+        "title": role_props['name'],
+        "description": f"{access_level}: {role_props['description']}",
+        "stage": role_props.get('stage', 'GA'),
         "includedPermissions": sorted(permissions)
     }
 
