@@ -55,7 +55,7 @@ def create_custom_role_from_yaml(yaml_path, org_id, access_level):
 
     if 'baseRoles' in role_props:
         print(f"📎 Expanding permissions from baseRoles: {role_props['baseRoles']}")
-        for base_role in role_props['baseRole']:
+        for base_role in role_props['baseRoles']:
             base_permissions = fetch_permissions_for_role(service, base_role)
             permissions.update(base_permissions)
 
