@@ -49,7 +49,7 @@ jobs:
       - name: Run Python script to create custom roles
         run: |
           source .venv/bin/activate
-          ORG_ID:168730572751
+          ORG_ID=168730572751
           python .github/scripts/rbac_manager.py \
             "$ORG_ID" \
             "${{ github.event.inputs.access_level }}" \
