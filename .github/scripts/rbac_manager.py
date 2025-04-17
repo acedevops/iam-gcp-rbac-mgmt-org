@@ -27,7 +27,7 @@ def fetch_permissions_for_role(service, role_name):
         print(f"⚠️ Could not fetch base role '{role_name}': {e}")
         return [] 
 
-def create_custom_role_from_yaml(yaml_path, org_id, access_level):
+def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
     with open(yaml_path, 'r') as f:
         role_def = yaml.safe_load(f)
         role_props = role_def.get('customRole', {})
@@ -123,4 +123,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print(f"\n📄 Processing: {yaml_path.name}")
-    create_custom_role_from_yaml(yaml_path, args.org_id, args.access_level)
+    create_or_update_custom_role_from_yaml(yaml_path, args.org_id, args.access_level)
