@@ -14,3 +14,4 @@ customRole:
     - gcp.redisenterprise.com/subscriptions.get
     - domains.registrations.getIamPolicy
     - appengine.runtimes.actAsAdmin
+    - domains.registrations.list 
