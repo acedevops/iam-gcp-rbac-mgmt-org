@@ -9,4 +9,5 @@ customRole:
   includedPermissions:
     - logging.logEntries.list
     - logging.logs.list
-  excludedPermissions: []
+  excludedPermissions:
+    - cloudonefs.isiloncloud.com/clusters.get
