@@ -97,7 +97,7 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
             print(f"✅ Role '{role_id}' in {parent}' is already up-to-date. No action taken.")
                   
     except HttpError as e:
-        if e.resp.status != 404:
+        if e.resp.status == 404:
             # Role does not exist, create new
             print(f"⏳ Creating role '{role_id}' in {parent}")
             response = org_roles.create(
