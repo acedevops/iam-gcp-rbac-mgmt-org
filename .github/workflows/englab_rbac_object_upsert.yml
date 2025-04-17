@@ -48,5 +48,4 @@ jobs:
           ORG_ID=168730572751
           python .github/scripts/rbac_manager.py \
             "$ORG_ID" \
-            "${{ github.event.inputs.access_level }}" \
             --role_file "${{ github.event.inputs.role_file }}"
