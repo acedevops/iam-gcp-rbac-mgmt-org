@@ -3,10 +3,15 @@ name: Create Custom Role from YAML
 on:
   workflow_dispatch:
     inputs:
-      project_id:
-        description: "Optional: GCP Project ID to define the role at project level"
-        required: false
+      access_level:
+        description: "Access level to prefix in the role description (Privileged/Regular)."
+        required: true
         type: string
+      role_file:
+        description: "YAML filename in infrastructure/definitions."
+        required: true
+        type: string
+
 
 permissions:
   id-token: write
@@ -44,10 +49,8 @@ jobs:
       - name: Run Python script to create custom roles
         run: |
           source .venv/bin/activate
-          if [[ -n "${{ github.event.inputs.project_id }}" ]]; then
-            echo "📦 Defining role at project level: ${{ github.event.inputs.project_id }}"
-            python .github/scripts/rbac_manager.py ${{ github.event.inputs.project_id }}
-          else
-            echo "🏢 No project specified. Using default org: 168730572751"
-            python .github/scripts/rbac_manager.py 168730572751 --org
-          fi
+          ORG_ID=168730572751
+          python .github/scripts/rbac_manager.py \
+            "$ORG_ID" \
+            "${{ github.event.inputs.access_level }}" \
+            --role_file "${{ github.event.inputs.role_file }}"
