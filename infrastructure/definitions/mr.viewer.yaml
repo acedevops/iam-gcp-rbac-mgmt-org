@@ -22,3 +22,4 @@ customRole:
     - domains.registrations.get
     - gcp.redisenterprise.com/databases.list
     - gkehub.fleet.get
+    - gcp.redisenterprise.com/subscriptions.list
