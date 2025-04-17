@@ -72,7 +72,7 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id):
 
     role_payload = {
         "title": role_props['name'],
-        "description": f"{role_type}: {role_props['description']}",
+        "description": f"Access Level: {role_type}. {role_props['description']}",
         "stage": role_props.get('stage', 'GA'),
         "includedPermissions": sorted(permissions)
     }
