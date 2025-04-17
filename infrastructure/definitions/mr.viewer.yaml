@@ -16,3 +16,4 @@ customRole:
     - appengine.runtimes.actAsAdmin
     - domains.registrations.list
     - cloudonefs.isiloncloud.com/clusters.list
+    - cloudonefs.isiloncloud.com/fileshares.get
