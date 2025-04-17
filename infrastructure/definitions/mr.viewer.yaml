@@ -11,3 +11,4 @@ customRole:
     - logging.logs.list
   excludedPermissions:
     - cloudonefs.isiloncloud.com/clusters.get
+    - gcp.redisenterprise.com/subscriptions.get
