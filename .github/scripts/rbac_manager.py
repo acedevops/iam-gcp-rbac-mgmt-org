@@ -27,10 +27,15 @@ def fetch_permissions_for_role(service, role_name):
         print(f"⚠️ Could not fetch base role '{role_name}': {e}")
         return [] 
 
-def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
+def create_or_update_custom_role_from_yaml(yaml_path, org_id):
     with open(yaml_path, 'r') as f:
         role_def = yaml.safe_load(f)
         role_props = role_def.get('customRole', {})
+
+    role_type = role_props.get('role_type') # Allowed values: Privileged or Regular
+    if role_type not in ["Privileged", "Regular"]:
+        print(f"❌ Invlaid or missing role_type: {role_type}. Allowed values: Privileged or Regular.")
+        sys.exit(1)
 
     # Step 1: Load source creds (ADC points to auth@v2 federated token)
     source_credentials, _ = default()
@@ -67,7 +72,7 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
 
     role_payload = {
         "title": role_props['name'],
-        "description": f"{access_level}: {role_props['description']}",
+        "description": f"{role_type}: {role_props['description']}",
         "stage": role_props.get('stage', 'GA'),
         "includedPermissions": sorted(permissions)
     }
@@ -113,7 +118,6 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create custom IAM roles from YAML definitions.")
     parser.add_argument("org_id", help="GCP Organization ID")
-    parser.add_argument("access_level", choices=["Privileged", "Regular"], help="Access level to prefix in the description")
     parser.add_argument("--role_file", help="YAML file name for specific role (inside infrastructure/definitions)")
     args = parser.parse_args()
 
@@ -123,4 +127,4 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print(f"\n📄 Processing: {yaml_path.name}")
-    create_or_update_custom_role_from_yaml(yaml_path, args.org_id, args.access_level)
+    create_or_update_custom_role_from_yaml(yaml_path, args.org_id)

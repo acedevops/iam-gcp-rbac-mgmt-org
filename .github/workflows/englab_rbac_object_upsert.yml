@@ -3,10 +3,6 @@ name: Create Custom Role from YAML
 on:
   workflow_dispatch:
     inputs:
-      access_level:
-        description: "Access level to prefix in the role description (Privileged/Regular)."
-        required: true
-        type: string
       role_file:
         description: "YAML filename in infrastructure/definitions."
         required: true

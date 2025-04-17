@@ -1,9 +1,10 @@
 customRole:
-  id: customLoggingViewer
-  name: Custom Logging Viewer
+  id: customLoggingViewer007a
+  name: Custom Logging Viewer007a
   description: This custom role allows read-only access to log entries.
   stage: GA
   baseRoles: []
+  role_type: "Regular"
   includedPermissions:
     - logging.logEntries.list
     - logging.logs.list
