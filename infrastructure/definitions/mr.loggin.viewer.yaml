@@ -8,4 +8,5 @@ customRole:
   includedPermissions:
     - logging.logEntries.list
     - logging.logs.list
+    - ml.jobs.list
   excludedPermissions: []

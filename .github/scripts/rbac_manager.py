@@ -19,7 +19,7 @@ def fetch_permissions_for_role(service, role_name):
             request = service.organizations().roles().get(name=role_name)
         else:
             print(f"❌ Invalid role format: {role_name}")
-            return[]
+            sys.exit(1)
 
         response = request.execute()
         return response.get("includedPermissions", [])
@@ -34,7 +34,7 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id):
 
     role_type = role_props.get('role_type') # Allowed values: Privileged or Regular
     if role_type not in ["Privileged", "Regular"]:
-        print(f"❌ Invlaid or missing role_type: {role_type}. Allowed values: Privileged or Regular.")
+        print(f"❌ Invalid or missing role_type: {role_type}. Allowed values: Privileged or Regular.")
         sys.exit(1)
 
     # Step 1: Load source creds (ADC points to auth@v2 federated token)
@@ -64,6 +64,9 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id):
             base_permissions = fetch_permissions_for_role(service, base_role)
             permissions.update(base_permissions)
 
+    if excluded_permissions:
+        print(f"🚫 Excluded permissions: {sorted(excluded_permissions)}")
+
     permissions.difference_update(excluded_permissions)
 
     if not permissions:
@@ -90,6 +93,14 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id):
 
         # Determine if update is needed
         if (set(existing_permissions) != set(role_payload["includedPermissions"]) or existing_title != role_payload["title"] or existing_description != role_payload["description"]):
+            if existing_permissions != set(role_payload["includedPermissions"]):
+                added = set(role_payload["includedPermissions"]) - existing_permissions
+                removed = existing_permissions - set(role_payload["includedPermissions"])
+                if added:
+                    print(f"🔼 Permissions added: {sorted(added)}")
+                if removed:
+                    print(f"🔽 Permissions removed: {sorted(removed)}")
+
             print(f"♻️ Updating existing role '{role_id}' in {parent}...")
             response = org_roles.patch(
                 name=role_name,
@@ -118,12 +129,16 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Create custom IAM roles from YAML definitions.")
     parser.add_argument("org_id", help="GCP Organization ID")
-    parser.add_argument("--role_file", help="YAML file name for specific role (inside infrastructure/definitions)")
+    parser.add_argument("--role_file", required=True, help="YAML file name for specific role (inside infrastructure/definitions)")
     args = parser.parse_args()
 
     yaml_path = Path("infrastructure/definitions") / args.role_file
     if not yaml_path.exists():
         print(f"❌ File '{yaml_path}' not found.")
+        sys.exit(1)
+
+    if not yaml_path.read_text().strip():
+        print(f"❌ YAML file {yaml_path} is empty.")
         sys.exit(1)
 
     print(f"\n📄 Processing: {yaml_path.name}")
