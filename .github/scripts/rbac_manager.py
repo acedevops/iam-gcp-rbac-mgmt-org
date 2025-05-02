@@ -138,7 +138,7 @@ def main():
         base_dir / "assignments" / args.role_file
     ]
 
-    yaml_path = next((p for p in possible_paths if p.exits()), None)
+    yaml_path = next((p for p in possible_paths if p.exists()), None)
 
     if not yaml_path.exists():
         print(f"❌ File '{yaml_path}' not found.")
