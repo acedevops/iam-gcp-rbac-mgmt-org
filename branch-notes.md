@@ -12,3 +12,10 @@
 - Created by: Mumtaz
 - Created on: 2025-04-17
 - Notes: This branch is to test the feature to extract the access_level from role definition specfile, instead of passing it in the GitHub Workflow
+
+## Branch: feature/rbac-manager_func
+- Purpose: Function based rbac_manager
+- Status: in progress
+- Created by: Mumtaz
+- Created on: 2025-05-02
+- Notes: Create branch to modify existing code into function based.

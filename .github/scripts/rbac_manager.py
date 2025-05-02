@@ -126,7 +126,7 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id):
             print(f"❌ Failed to retrieve or create role '{role_id}': {e}")
             sys.exit(1)
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Create custom IAM roles from YAML definitions.")
     parser.add_argument("org_id", help="GCP Organization ID")
     parser.add_argument("--role_file", required=True, help="YAML file name for specific role (inside infrastructure/definitions)")
@@ -143,3 +143,7 @@ if __name__ == "__main__":
 
     print(f"\n📄 Processing: {yaml_path.name}")
     create_or_update_custom_role_from_yaml(yaml_path, args.org_id)
+
+
+if __name__ == "__main__":
+    main()
