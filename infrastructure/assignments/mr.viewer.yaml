@@ -7,6 +7,7 @@ customRole:
   role_type: "Regular"
   includedPermissions:
     - logging.logEntries.list
+    - logging.logs.list
   excludedPermissions:
     - cloudonefs.isiloncloud.com/clusters.get
     - gcp.redisenterprise.com/subscriptions.get
