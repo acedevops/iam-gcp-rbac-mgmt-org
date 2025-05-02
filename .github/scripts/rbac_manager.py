@@ -132,7 +132,14 @@ def main():
     parser.add_argument("--role_file", required=True, help="YAML file name for specific role (inside infrastructure/definitions)")
     args = parser.parse_args()
 
-    yaml_path = Path("infrastructure/definitions") / args.role_file
+    base_dir = Path("infrastructure")
+    possible_paths = [
+        base_dir / "definitions" / args.role_file,
+        base_dir / "assignments" / args.role_file
+    ]
+
+    yaml_path = next((p for p in possible_paths if p.exits()), None)
+
     if not yaml_path.exists():
         print(f"❌ File '{yaml_path}' not found.")
         sys.exit(1)
