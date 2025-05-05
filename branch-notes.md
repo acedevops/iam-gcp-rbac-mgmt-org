@@ -26,3 +26,10 @@
 - Created by: Mumtaz
 - Created on: 2025-05-02
 - Notes: Modify the logic and search .yaml or .yml files starting from infrastructure folder instead of definition folder. There are two subfolder under infrastructure, one is definitions and other is assignments.
+
+## Branch: feature/rbac-manager_search_files_in_infra
+- Purpose: Search .yaml files under infrastructure/
+- Status: merged
+- Created by: Mumtaz
+- Created on: 2025-05-05
+- Notes: .ymal/.yml files are now seachable from infrastructure/ folder
