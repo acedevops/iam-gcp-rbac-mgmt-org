@@ -33,3 +33,10 @@
 - Created by: Mumtaz
 - Created on: 2025-05-05
 - Notes: .ymal/.yml files are now seachable from infrastructure/ folder
+
+## Branch: feature/rbac-manager_assignment
+- Purpose: add functionality for RBAC assignment
+- Status: in progress
+- Created by: Mumtaz
+- Created on: 2025-05-05
+- Notes: This branch is created to test the RBAC assignment using the YAML file.

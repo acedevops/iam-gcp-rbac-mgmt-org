@@ -1,0 +1,6 @@
+assignments:
+  - principal: group:gcp-devops@appingale.com
+    role: organizations/168730572751/roles/customLoggingViewer
+    scope:
+      level: project
+      id: hale-entry-456413-g7
