@@ -1,0 +1,25 @@
+customRole:
+  id: customLoggingViewer007a
+  name: Custom Logging Viewer007a
+  description: This custom role allows read-only access to log entries.
+  stage: GA
+  baseRoles: []
+  role_type: "Regular"
+  includedPermissions:
+    - logging.logEntries.list
+    - logging.logs.list
+  excludedPermissions:
+    - cloudonefs.isiloncloud.com/clusters.get
+    - gcp.redisenterprise.com/subscriptions.get
+    - domains.registrations.getIamPolicy
+    - appengine.runtimes.actAsAdmin
+    - domains.registrations.list
+    - cloudonefs.isiloncloud.com/clusters.list
+    - cloudonefs.isiloncloud.com/fileshares.get
+    - cloudonefs.isiloncloud.com/fileshares.list
+    - dataplex.assets.readData
+    - domains.registrations.get
+    - gcp.redisenterprise.com/databases.list
+    - gkehub.fleet.get
+    - gcp.redisenterprise.com/subscriptions.list
+    - gcp.redisenterprise.com/databases.get

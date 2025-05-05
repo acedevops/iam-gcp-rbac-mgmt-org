@@ -19,7 +19,7 @@ def fetch_permissions_for_role(service, role_name):
             request = service.organizations().roles().get(name=role_name)
         else:
             print(f"❌ Invalid role format: {role_name}")
-            return[]
+            sys.exit(1)
 
         response = request.execute()
         return response.get("includedPermissions", [])
@@ -27,10 +27,15 @@ def fetch_permissions_for_role(service, role_name):
         print(f"⚠️ Could not fetch base role '{role_name}': {e}")
         return [] 
 
-def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
+def create_or_update_custom_role_from_yaml(yaml_path, org_id):
     with open(yaml_path, 'r') as f:
         role_def = yaml.safe_load(f)
         role_props = role_def.get('customRole', {})
+
+    role_type = role_props.get('role_type') # Allowed values: Privileged or Regular
+    if role_type not in ["Privileged", "Regular"]:
+        print(f"❌ Invalid or missing role_type: {role_type}. Allowed values: Privileged or Regular.")
+        sys.exit(1)
 
     # Step 1: Load source creds (ADC points to auth@v2 federated token)
     source_credentials, _ = default()
@@ -59,6 +64,9 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
             base_permissions = fetch_permissions_for_role(service, base_role)
             permissions.update(base_permissions)
 
+    if excluded_permissions:
+        print(f"🚫 Excluded permissions: {sorted(excluded_permissions)}")
+
     permissions.difference_update(excluded_permissions)
 
     if not permissions:
@@ -67,7 +75,7 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
 
     role_payload = {
         "title": role_props['name'],
-        "description": f"{access_level}: {role_props['description']}",
+        "description": f"Access Level: {role_type}. {role_props['description']}",
         "stage": role_props.get('stage', 'GA'),
         "includedPermissions": sorted(permissions)
     }
@@ -85,6 +93,14 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
 
         # Determine if update is needed
         if (set(existing_permissions) != set(role_payload["includedPermissions"]) or existing_title != role_payload["title"] or existing_description != role_payload["description"]):
+            if existing_permissions != set(role_payload["includedPermissions"]):
+                added = set(role_payload["includedPermissions"]) - existing_permissions
+                removed = existing_permissions - set(role_payload["includedPermissions"])
+                if added:
+                    print(f"🔼 Permissions added: {sorted(added)}")
+                if removed:
+                    print(f"🔽 Permissions removed: {sorted(removed)}")
+
             print(f"♻️ Updating existing role '{role_id}' in {parent}...")
             response = org_roles.patch(
                 name=role_name,
@@ -110,17 +126,31 @@ def create_or_update_custom_role_from_yaml(yaml_path, org_id, access_level):
             print(f"❌ Failed to retrieve or create role '{role_id}': {e}")
             sys.exit(1)
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser(description="Create custom IAM roles from YAML definitions.")
     parser.add_argument("org_id", help="GCP Organization ID")
-    parser.add_argument("access_level", choices=["Privileged", "Regular"], help="Access level to prefix in the description")
-    parser.add_argument("--role_file", help="YAML file name for specific role (inside infrastructure/definitions)")
+    parser.add_argument("--role_file", required=True, help="YAML file name for specific role (inside infrastructure/definitions)")
     args = parser.parse_args()
 
-    yaml_path = Path("infrastructure/definitions") / args.role_file
+    base_dir = Path("infrastructure")
+    possible_paths = [
+        base_dir / "definitions" / args.role_file,
+        base_dir / "assignments" / args.role_file
+    ]
+
+    yaml_path = next((p for p in possible_paths if p.exists()), None)
+
     if not yaml_path.exists():
         print(f"❌ File '{yaml_path}' not found.")
         sys.exit(1)
 
+    if not yaml_path.read_text().strip():
+        print(f"❌ YAML file {yaml_path} is empty.")
+        sys.exit(1)
+
     print(f"\n📄 Processing: {yaml_path.name}")
-    create_or_update_custom_role_from_yaml(yaml_path, args.org_id, args.access_level)
+    create_or_update_custom_role_from_yaml(yaml_path, args.org_id)
+
+
+if __name__ == "__main__":
+    main()
