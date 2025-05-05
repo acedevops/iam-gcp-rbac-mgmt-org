@@ -165,7 +165,7 @@ def assign_role_from_yaml(yaml_path):
         get_policy = crm_service.folders().getIamPolicy
         set_policy = crm_service.folders().setIamPolicy
     elif level == "project":
-        resource = f"projects/{target_id}"
+        resource = target_id
         get_policy = crm_service.projects().getIamPolicy
         set_policy = crm_service.projects().setIamPolicy
     else:
